@@ -14,3 +14,4 @@ API_KEY = '<Персональный апи ключ tmdb.org>'
 cd wiki_movies_scrapy
 scrapy crawl -O movies.csv:csv wiki_movies
 ```
+Результаты будут сохранены в файл movies.csv
