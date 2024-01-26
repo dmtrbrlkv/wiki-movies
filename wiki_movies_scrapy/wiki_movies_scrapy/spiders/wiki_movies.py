@@ -72,12 +72,13 @@ class WikiMoviesSpider(scrapy.Spider):
         }
 
     def rating_from_tmdb_api(self, imdb_id, proxies, api_key):
-        headers = {
-            'Authorization': f'Bearer {api_key}'
+        params = {
+            'api_key': api_key,
+            'external_source': 'imdb_id'
         }
-        url = f'https://api.themoviedb.org/3/find/tt{imdb_id}?external_source=imdb_id'
+        url = f'https://api.themoviedb.org/3/find/tt{imdb_id}'
         try:
-            resp = requests.get(url, headers=headers, proxies=proxies)
+            resp = requests.get(url, proxies=proxies, params=params)
             json = resp.json()
             return json['movie_results'][0]['vote_average']
         except Exception as e:
