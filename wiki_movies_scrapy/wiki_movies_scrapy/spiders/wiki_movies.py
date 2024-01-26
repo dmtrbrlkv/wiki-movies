@@ -1,5 +1,6 @@
 import scrapy
 import re
+import requests
 
 
 
@@ -51,8 +52,12 @@ class WikiMoviesSpider(scrapy.Spider):
         imdb_id = response.xpath('//th/a[contains(text(), "IMDb")]/../..//span/a/text()').get()
         if imdb_id:
             imdb_id = imdb_id.split('ID ')[-1]
-
-            rating =  response.follow(f'https://www.imdb.com/title/tt{imdb_id}/', callback=self.parse_imdb)
+            if self.settings.get('PARSE_RATING'):
+                rating = self.rating_from_tmdb_api(imdb_id, self.settings.get('PROXIES'), self.settings.get(('API_KEY')))
+            else:
+                rating = None
+        else:
+            rating = None
 
 
         yield {
@@ -66,6 +71,15 @@ class WikiMoviesSpider(scrapy.Spider):
             'url': response.url
         }
 
-    def parse_imdb(self, response):
-        rating = response.xpath('//*[@id="__next"]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[2]/div[1]/div/div[1]/a/span/div/div[2]/div[1]/span[1]/text()').get()
-        yield {'rating': rating}
+    def rating_from_tmdb_api(self, imdb_id, proxies, api_key):
+        headers = {
+            'Authorization': f'Bearer {api_key}'
+        }
+        url = f'https://api.themoviedb.org/3/find/tt{imdb_id}?external_source=imdb_id'
+        try:
+            resp = requests.get(url, headers=headers, proxies=proxies)
+            json = resp.json()
+            return json['movie_results'][0]['vote_average']
+        except Exception as e:
+            print(e)
+            return None
