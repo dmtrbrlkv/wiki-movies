@@ -20,7 +20,7 @@ NEWSPIDER_MODULE = "wiki_movies_scrapy.spiders"
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-#CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 100
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -93,5 +93,7 @@ TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
 PARSE_RATING = False
-PROXIES = {'https': ''}
+PROXY = ''
 API_KEY = ''
+
+LOG_LEVEL = 'INFO'
