@@ -7,7 +7,9 @@ class WikiMoviesSpider(scrapy.Spider):
     start_urls = ['https://ru.wikipedia.org/wiki/Категория:Фильмы_по_годам']
 
     def parse(self, response):
-        years = response.css('#mw-subcategories > div > div > div:nth-child(3) > ul > li > div > div.CategoryTreeItem > a::attr(href)')
+        years = response.css(
+            '#mw-subcategories > div > div > div:nth-child(3) > ul > li > div > div.CategoryTreeItem > a::attr(href)'
+        )
         yield from response.follow_all(years, callback=self.parse_year)
 
     def parse_year(self, response):
@@ -27,7 +29,9 @@ class WikiMoviesSpider(scrapy.Spider):
         if not genre:
             genre = response.xpath('//th/a[contains(text(), "Жанр")]/../..//span/text()').extract()
 
-        director = response.xpath('//th[contains(text(), "Режисс")]/..//a/span[not( contains(text(), "["))]/text()').extract()
+        director = response.xpath(
+            '//th[contains(text(), "Режисс")]/..//a/span[not( contains(text(), "["))]/text()'
+        ).extract()
         if not director:
             director = response.xpath('//th[contains(text(), "Режисс")]/..//a/text()').extract()
         if not director:
@@ -61,7 +65,8 @@ class WikiMoviesSpider(scrapy.Spider):
             proxy = self.settings.get('PROXY')
             external_source = 'imdb_id'
 
-            rating_url = f'https://api.themoviedb.org/3/find/tt{imdb_id}?api_key={api_key}&external_source={external_source}'
+            rating_url = (f'https://api.themoviedb.org/3/find/tt{imdb_id}?'
+                          f'api_key={api_key}&external_source={external_source}')
             yield scrapy.Request(
                 rating_url,
                 callback=self.parse_rating,
