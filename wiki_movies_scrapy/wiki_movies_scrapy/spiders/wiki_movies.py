@@ -41,12 +41,6 @@ class WikiMoviesSpider(scrapy.Spider):
         if not country:
             country = response.xpath('//th[contains(text(), "Стран")]/..//span/text()').extract()
 
-        # year = response.xpath('//th[text()="Год"]/..//*[re:test(text(), "\d{4}")]/text()').get()
-        # if year and len(year) != 4:
-        #     year = re.search('\d{4}', year)
-        #     if year:
-        #         year = year[0]
-
         imdb_id = response.xpath('//th/a[contains(text(), "IMDb")]/../..//span/a/text()').get()
         if imdb_id:
             imdb_id = imdb_id.split('ID ')[-1]
